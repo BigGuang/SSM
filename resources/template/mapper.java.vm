@@ -1,0 +1,29 @@
+package ${package.Mapper};
+
+import ${package.Entity}.${entity};
+import ${superMapperClassPackage};
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p>
+ * Mapper接口
+ * </p>
+ *
+ * @author ${cfg.author}
+ * @since ${date}
+ */
+public interface ${table.mapperName} {
+
+    public int add(${entity} obj);
+    public int delete(String id);
+    public int update(${entity} obj);
+
+    public ${entity} get${entity}(${entity} obj);
+    public ${entity} get${entity}ById(String id);
+
+    public Long getTotal(Map<String, Object> map);
+    public List<${entity}> getAll();
+    public List<${entity}> find(Map<String, Object> map);
+
+}

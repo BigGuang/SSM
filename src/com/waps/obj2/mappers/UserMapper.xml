@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.waps.obj2.dao.UserDao">
+    <!-- 定义缓存  一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 -->
+    <cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"></cache>
+    <!-- 增加 -->
+    <insert id="add" parameterType="com.waps.obj2.domain.User">
+        insert into users values(#{id},#{userName},#{password},#{age},#{trueName},#{email},#{phone},#{roleName})
+    </insert>
+    <resultMap id="userResultMap" type="com.waps.obj2.domain.User" >
+        <id property="id" column="id"/>
+        <result property="userName" column="userName"/>
+        <result property="password" column="password"/>
+        <result property="age" column="age"/>
+        <result property="trueName" column="trueName" />
+        <result property="email" column="email" />
+        <result property="phone" column="phone" />
+        <result property="roleName" column="roleName" />
+    </resultMap>
+    <select id="getUserById" parameterType="java.lang.Integer" resultMap="userResultMap">
+        select * from users where id=#{id}
+    </select>
+    <select id="find" parameterType="com.waps.obj2.domain.User" resultMap="userResultMap">
+        select * from users
+        <where>
+            <if test="userName!=null and userName!='' ">
+                and userName like #{userName}
+            </if>
+        </where>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getTotal" parameterType="java.util.Map" resultType="java.lang.Long">
+        select count(*) from users
+        <where>
+            <if test="userName!=null and userName!='' ">
+                and userName like #{userName}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getAll" resultType="com.waps.obj2.domain.User">
+        select * from users
+    </select>
+    <select id="getUser" resultType="com.waps.obj2.domain.User">
+        select * from users where id=#{id}
+    </select>
+
+    <select id="login" resultType="com.waps.obj2.domain.User">
+
+    </select>
+    <!-- 用户删除 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from users where id = #{id}
+    </delete>
+    <!-- 用户修改 -->
+    <update id="update" parameterType="com.waps.obj2.domain.User">
+        update users
+        <set>
+            <if test="age != null and age != ''">age = #{age},</if>
+            <if test="userName != null and userName != ''">userName = #{userName},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="trueName != null and trueName != ''">trueName = #{trueName},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="roleName != null and roleName != ''">roleName = #{roleName},</if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

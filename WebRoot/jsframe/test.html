@@ -1,0 +1,85 @@
+1.<div id="div_status_1"></div>
+2.<div id="div_status_2"></div>
+3.<div id="div_status_3"></div>
+4.<div id="div_status_4"></div>
+<script>
+
+    $(function () {
+        login("1122221");
+    });
+
+    var _nAjaxTimeout=30000;
+
+    function sync(_asUUID){
+        $.ajax({
+            url: '/jsframe/test.groovy',
+            type: 'GET',
+            data: { action: 'sync',uid:_asUUID},
+            //调小超时时间会引起异常
+            timeout: _nAjaxTimeout,
+            dataType: "html",
+            //请求成功后触发
+            success: function (data) {
+                $('#div_status_2').html(data);
+            },
+            //请求失败遇到异常触发
+            error: function (xhr, errorInfo, ex) {
+                $('#div_status_4').html(errorInfo);
+                if(errorInfo === "timeout"){
+                    sync(_asUUID);
+                }
+            },
+            //完成请求后触发。即在success或error触发后触发
+            complete: function (xhr, status) {
+                switch (xhr.status){
+                    case 201:sync(_asUUID);break;
+                    case 200:{$('#div_status_3').html(xhr.status)} break;
+                }
+            },
+            //发送请求前触发
+            beforeSend: function (xhr) {
+                //可以设置自定义标头
+                xhr.setRequestHeader('Content-Type', 'application/xml;charset=utf-8');
+                $('#div_status_1').html(xhr);
+            },
+            //是否使用异步发送
+            async: true
+        })
+    }
+
+    function login(_asUUID) {
+        $.ajax({
+            type: "GET",
+            url: '/jsframe/test.groovy',
+            data: { action: 'add',uid:_asUUID},
+            dataType: "html",
+            cache: false,
+            timeout: _nAjaxTimeout,
+            success: function(data) {
+                $('#div_status_2').html(data);
+                start(_asUUID);
+                sync(_asUUID);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $("#status").html("error");
+            },
+            async: true
+        });
+    }
+
+    function start(uid){
+        $.ajax({
+            type: "GET",
+            url: '/jsframe/test.groovy',
+            data: { action: 'start',uid:uid},
+            dataType: "html",
+            cache: false,
+            timeout: _nAjaxTimeout,
+            success: function(data) {
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+            },
+            async: true
+        });
+    }
+</script>

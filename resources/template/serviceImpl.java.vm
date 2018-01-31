@@ -1,0 +1,72 @@
+package
+
+    ${package.ServiceImpl};
+
+import ${package.Entity}.${entity};
+import ${package.Mapper}.${table.mapperName};
+import ${package.Service}.${table.serviceName};
+import org.springframework.stereotype.Service;
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p>
+ * ${table.comment}  服务实现类
+ * </p>
+ *
+ * @author ${cfg.author}
+ * @since ${date}
+ */
+#set($serviceName=${entity.substring(0,1).toLowerCase()}+${entity.substring(1,${entity.length()})}+'Service')
+
+@Service(value = "${serviceName}")
+public class ${table.serviceImplName} implements ${table.serviceName} {
+
+    private ${table.mapperName} ${table.mapperName.toLowerCase()};
+
+    @Resource
+    public void set${table.mapperName}(${table.mapperName} ${table.mapperName.toLowerCase()}) {
+        this.${table.mapperName.toLowerCase()} = ${table.mapperName.toLowerCase()};
+    }
+
+    @Override
+    public int add(${entity} obj){
+        return ${table.mapperName.toLowerCase()}.add(obj);
+    }
+
+    @Override
+    public int delete(String id){
+        return ${table.mapperName.toLowerCase()}.delete(id);
+    }
+
+    @Override
+    public int update(${entity} obj){
+        return ${table.mapperName.toLowerCase()}.update(obj);
+    }
+
+    @Override
+    public ${entity} get${entity}(${entity} obj){
+        return ${table.mapperName.toLowerCase()}.get${entity}(obj);
+    }
+
+    @Override
+    public ${entity} get${entity}ById(String id){
+        return ${table.mapperName.toLowerCase()}.get${entity}ById(id);
+    }
+
+    @Override
+    public Long getTotal(Map<String, Object> map){
+        return ${table.mapperName.toLowerCase()}.getTotal(map);
+    }
+
+    @Override
+    public List<${entity}> getAll(){
+        return ${table.mapperName.toLowerCase()}.getAll();
+    }
+
+    @Override
+    public List<${entity}> find(Map<String, Object> map){
+        return ${table.mapperName.toLowerCase()}.find(map);
+    }
+}

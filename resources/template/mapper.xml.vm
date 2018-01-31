@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package.Mapper}.${table.mapperName}">
+    #if(${enableCache})
+        <!--开启二级缓存-->
+    ##        <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+        <cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"></cache>
+    #end
+    <resultMap id="baseResultMap" type="${package.Entity}.${entity}">
+        #foreach($field in ${table.fields})
+            #if(${field.keyFlag})
+                <id column="${field.name}" property="${field.propertyName}"/>
+            #else
+                <result column="${field.name}" property="${field.propertyName}"/>
+            #end
+        #end
+    </resultMap>
+
+    <!-- 通用查询结果列-->
+    <sql id="Base_Column_List">
+        ${table.fieldNames}
+    </sql>
+
+    <!-- 增加 -->
+    <insert id="add" parameterType="${package.Entity}.${entity}">
+        #set($temp="")
+        #foreach($field in ${table.fields})
+             #set($temp=$temp+',#{'+${field.name}+'}')
+        #end
+        #set($temp=$temp.substring(1,$temp.length()))
+        insert into ${table.name} values( ${temp})
+    </insert>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="java.lang.String">
+        delete from ${table.name} where id = #{id}
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="${package.Entity}.${entity}">
+        update ${table.name}
+        <set>
+            #foreach($field in ${table.fields})
+                <if test="${field.name} != null and ${field.name} != ''">${field.name} = #{${field.name}},</if>
+            #end
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!-- 查找 -->
+    <select id="get${entity}" resultType="${package.Entity}.${entity}">
+        select
+         *
+        from ${table.name} where id=#{id}
+    </select>
+
+    <select id="get${entity}ById" parameterType="java.lang.String" resultMap="baseResultMap">
+        select
+         *
+        from ${table.name} where id=#{id}
+    </select>
+
+    <select id="getTotal" parameterType="java.util.Map" resultType="java.lang.Long">
+        select count(*) from ${table.name}
+    </select>
+
+    <select id="getAll" resultType="${package.Entity}.${entity}">
+        select
+        <include refid="Base_Column_List"/>
+        from ${table.name}
+    </select>
+
+    <select id="find" resultType="${package.Entity}.${entity}">
+        select
+        <include refid="Base_Column_List"/>
+        from ${table.name}
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+
+
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.waps.model.dao.ResFileDao">
+        <!--开启二级缓存-->
+            <cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"></cache>
+    <resultMap id="baseResultMap" type="com.waps.model.domain.ResFile">
+                <id column="id" property="id"/>
+                <result column="res_id" property="resId"/>
+                <result column="res_name" property="resName"/>
+                <result column="file_path" property="filePath"/>
+                <result column="modifytime" property="modifytime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列-->
+    <sql id="Base_Column_List">
+        id, res_id AS resId, res_name AS resName, file_path AS filePath, modifytime
+    </sql>
+
+    <!-- 增加 -->
+    <insert id="add" parameterType="com.waps.model.domain.ResFile">
+        insert into res_file values( #{id},#{res_id},#{res_name},#{file_path},#{modifytime})
+    </insert>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="java.lang.String">
+        delete from res_file where id = #{id}
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="com.waps.model.domain.ResFile">
+        update res_file
+        <set>
+                <if test="id != null and id != ''">id = #{id},</if>
+                <if test="res_id != null and res_id != ''">res_id = #{res_id},</if>
+                <if test="res_name != null and res_name != ''">res_name = #{res_name},</if>
+                <if test="file_path != null and file_path != ''">file_path = #{file_path},</if>
+                <if test="modifytime != null and modifytime != ''">modifytime = #{modifytime},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!-- 查找 -->
+    <select id="getResFile" resultType="com.waps.model.domain.ResFile">
+        select
+         *
+        from res_file where id=#{id}
+    </select>
+
+    <select id="getResFileById" parameterType="java.lang.String" resultMap="baseResultMap">
+        select
+         *
+        from res_file where id=#{id}
+    </select>
+
+    <select id="getTotal" parameterType="java.util.Map" resultType="java.lang.Long">
+        select count(*) from res_file
+    </select>
+
+    <select id="getAll" resultType="com.waps.model.domain.ResFile">
+        select
+        <include refid="Base_Column_List"/>
+        from res_file
+    </select>
+
+    <!--<select id="find" parameterType="com.waps.model.domain.ResFile" resultMap="baseResultMap">-->
+        <!--select-->
+        <!--*-->
+        <!--from res_file-->
+        <!--<if test="start!=null and size!=null">-->
+            <!--limit #{start},#{size}-->
+        <!--</if>-->
+    <!--</select>-->
+
+    <select id="find" resultType="com.waps.model.domain.ResFile">
+        select
+        <include refid="Base_Column_List"/>
+        from res_file
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+
+
+</mapper>

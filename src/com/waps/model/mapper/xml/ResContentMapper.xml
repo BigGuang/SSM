@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.waps.model.dao.ResContentDao">
+        <!--开启二级缓存-->
+            <cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"></cache>
+    <resultMap id="baseResultMap" type="com.waps.model.domain.ResContent">
+                <id column="id" property="id"/>
+                <result column="old_id" property="oldId"/>
+                <result column="doc_id" property="docId"/>
+                <result column="publisher" property="publisher"/>
+                <result column="classid" property="classid"/>
+                <result column="catalogid" property="catalogid"/>
+                <result column="type" property="type"/>
+                <result column="title" property="title"/>
+                <result column="content" property="content"/>
+                <result column="files" property="files"/>
+                <result column="keywords" property="keywords"/>
+                <result column="author" property="author"/>
+                <result column="totalsize" property="totalsize"/>
+                <result column="createTime" property="createTime"/>
+                <result column="modifyTime" property="modifyTime"/>
+                <result column="ordernum" property="ordernum"/>
+                <result column="visible" property="visible"/>
+                <result column="memo" property="memo"/>
+                <result column="status" property="status"/>
+                <result column="extend" property="extend"/>
+    </resultMap>
+
+    <!-- 通用查询结果列-->
+    <sql id="Base_Column_List">
+        id, old_id AS oldId, doc_id AS docId, publisher, classid, catalogid, type, title, content, files, keywords, author, totalsize, createTime, modifyTime, ordernum, visible, memo, status, extend
+    </sql>
+
+    <!-- 增加 -->
+    <insert id="add" parameterType="com.waps.model.domain.ResContent">
+        insert into res_content values( #{id},#{old_id},#{doc_id},#{publisher},#{classid},#{catalogid},#{type},#{title},#{content},#{files},#{keywords},#{author},#{totalsize},#{createTime},#{modifyTime},#{ordernum},#{visible},#{memo},#{status},#{extend})
+    </insert>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="java.lang.String">
+        delete from res_content where id = #{id}
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="com.waps.model.domain.ResContent">
+        update res_content
+        <set>
+                <if test="id != null and id != ''">id = #{id},</if>
+                <if test="old_id != null and old_id != ''">old_id = #{old_id},</if>
+                <if test="doc_id != null and doc_id != ''">doc_id = #{doc_id},</if>
+                <if test="publisher != null and publisher != ''">publisher = #{publisher},</if>
+                <if test="classid != null and classid != ''">classid = #{classid},</if>
+                <if test="catalogid != null and catalogid != ''">catalogid = #{catalogid},</if>
+                <if test="type != null and type != ''">type = #{type},</if>
+                <if test="title != null and title != ''">title = #{title},</if>
+                <if test="content != null and content != ''">content = #{content},</if>
+                <if test="files != null and files != ''">files = #{files},</if>
+                <if test="keywords != null and keywords != ''">keywords = #{keywords},</if>
+                <if test="author != null and author != ''">author = #{author},</if>
+                <if test="totalsize != null and totalsize != ''">totalsize = #{totalsize},</if>
+                <if test="createTime != null and createTime != ''">createTime = #{createTime},</if>
+                <if test="modifyTime != null and modifyTime != ''">modifyTime = #{modifyTime},</if>
+                <if test="ordernum != null and ordernum != ''">ordernum = #{ordernum},</if>
+                <if test="visible != null and visible != ''">visible = #{visible},</if>
+                <if test="memo != null and memo != ''">memo = #{memo},</if>
+                <if test="status != null and status != ''">status = #{status},</if>
+                <if test="extend != null and extend != ''">extend = #{extend},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!-- 查找 -->
+    <select id="getResContent" resultType="com.waps.model.domain.ResContent">
+        select
+         *
+        from res_content where id=#{id}
+    </select>
+
+    <select id="getResContentById" parameterType="java.lang.String" resultMap="baseResultMap">
+        select
+         *
+        from res_content where id=#{id}
+    </select>
+
+    <select id="getTotal" parameterType="java.util.Map" resultType="java.lang.Long">
+        select count(*) from res_content
+    </select>
+
+    <select id="getAll" resultType="com.waps.model.domain.ResContent">
+        select
+        <include refid="Base_Column_List"/>
+        from res_content
+    </select>
+
+    <select id="find" parameterType="com.waps.model.domain.ResContent" resultMap="baseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from res_content
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+
+
+</mapper>

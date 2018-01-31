@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.waps.model.dao.SysUserDao">
+        <!--开启二级缓存-->
+            <cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"></cache>
+    <resultMap id="baseResultMap" type="com.waps.model.domain.SysUser">
+                <id column="id" property="id"/>
+                <result column="siteid" property="siteid"/>
+                <result column="username" property="username"/>
+                <result column="password" property="password"/>
+                <result column="enable" property="enable"/>
+                <result column="roleid" property="roleid"/>
+                <result column="cpid" property="cpid"/>
+                <result column="authority" property="authority"/>
+                <result column="email" property="email"/>
+                <result column="nickname" property="nickname"/>
+                <result column="lasttime" property="lasttime"/>
+                <result column="createtime" property="createtime"/>
+                <result column="memo" property="memo"/>
+    </resultMap>
+
+    <!-- 通用查询结果列-->
+    <sql id="Base_Column_List">
+        id, siteid, username, password, enable, roleid, cpid, authority, email, nickname, lasttime, createtime, memo
+    </sql>
+
+    <!-- 增加 -->
+    <insert id="add" parameterType="com.waps.model.domain.SysUser">
+        insert into sys_user values( #{id},#{siteid},#{username},#{password},#{enable},#{roleid},#{cpid},#{authority},#{email},#{nickname},#{lasttime},#{createtime},#{memo})
+    </insert>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="java.lang.String">
+        delete from sys_user where id = #{id}
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="com.waps.model.domain.SysUser">
+        update sys_user
+        <set>
+                <if test="id != null and id != ''">id = #{id},</if>
+                <if test="siteid != null and siteid != ''">siteid = #{siteid},</if>
+                <if test="username != null and username != ''">username = #{username},</if>
+                <if test="password != null and password != ''">password = #{password},</if>
+                <if test="enable != null and enable != ''">enable = #{enable},</if>
+                <if test="roleid != null and roleid != ''">roleid = #{roleid},</if>
+                <if test="cpid != null and cpid != ''">cpid = #{cpid},</if>
+                <if test="authority != null and authority != ''">authority = #{authority},</if>
+                <if test="email != null and email != ''">email = #{email},</if>
+                <if test="nickname != null and nickname != ''">nickname = #{nickname},</if>
+                <if test="lasttime != null and lasttime != ''">lasttime = #{lasttime},</if>
+                <if test="createtime != null and createtime != ''">createtime = #{createtime},</if>
+                <if test="memo != null and memo != ''">memo = #{memo},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!-- 查找 -->
+    <select id="getSysUser" resultType="com.waps.model.domain.SysUser">
+        select
+         *
+        from sys_user where id=#{id}
+    </select>
+
+    <select id="getSysUserById" parameterType="java.lang.String" resultMap="baseResultMap">
+        select
+         *
+        from sys_user where id=#{id}
+    </select>
+
+    <select id="getTotal" parameterType="java.util.Map" resultType="java.lang.Long">
+        select count(*) from sys_user
+    </select>
+
+    <select id="getAll" resultType="com.waps.model.domain.SysUser">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+    </select>
+
+    <select id="find" parameterType="com.waps.model.domain.SysUser" resultMap="baseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+
+
+</mapper>

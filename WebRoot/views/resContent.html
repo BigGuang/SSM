@@ -1,0 +1,235 @@
+
+
+<script>
+    var url_list="/model/resContent/list.do";
+    var url_edit="/model/resContent/edit.do";
+    var url_del="/model/resContent/del.do";
+    var url_save="/model/resContent/save.do";
+    var delID = null;
+
+    //启动时加载table
+    var datatable = null
+    $(function () {
+        $('#add_modal').modal('hide')
+        datatable = $('#resContentTable').DataTable({
+            "processing": true,
+            "ajax": url_list,
+            "columns": [
+                {"data":"id"},{"data":"oldId"},{"data":"docId"},{"data":"publisher"},{"data":"classid"},{"data":"catalogid"},{"data":"type"},{"data":"title"},{"data":"content"},{"data":"files"},{"data":"keywords"},{"data":"author"},{"data":"totalsize"},{"data":"createTime"},{"data":"modifyTime"},{"data":"ordernum"},{"data":"visible"},{"data":"memo"},{"data":"status"},{"data":"extend"}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        var id = row.id;
+                        return "<a href='javascript:edit(\"" + id + "\")'>编辑</a> | <a href=\"javascript:alertShow('" + id + "')\">删除</a>"
+                    },
+                    "targets": 20
+                }
+            ],
+            "language": {
+                "url": "/jsframe/datatables/chinese.json"
+            },
+            "order": [[0, 'asc']]
+        });
+    });
+</script>
+<script>
+    function reLoadTable() {
+        $('#resContentTable').DataTable().ajax.reload();
+    }
+
+    function formShow() {
+        $('#add_modal').modal('show');
+    }
+
+    function formHidden() {
+        $('#add_modal').modal('hide');
+    }
+
+    function alertShow(id) {
+        delID = id;
+        $('#alert_modal').modal('show');
+    }
+
+    function alertHidden() {
+        delID = null;
+        $('#alert_modal').modal('hide');
+    }
+
+
+
+
+    // 新增
+    function add() {
+        $('#form').clearForm();
+        formShow();
+    }
+
+    // 编辑
+    function edit(id) {
+        if (id) {
+            $.post(url_edit,
+                    {id: id},
+                    function (result) {
+                        var dataObj = eval("(" + result + ")");
+                        $("#form").setForm(dataObj);
+                        formShow();
+                    });
+        }
+    }
+
+    // 删除
+    function delAct() {
+        if (delID) {
+            del(delID);
+        }
+    }
+
+    // 删除
+    function del(id) {
+        if (id) {
+            $.post(url_del,
+                    {id: id},
+                    function (result) {
+                        var dataObj = eval("(" + result + ")");
+                        var ret = dataObj.message;
+                        var num = dataObj.num;
+                        if ($.trim(ret) == "ok") {
+                            alertHidden();
+                            reLoadTable();
+                        }
+                        if ($.trim(ret) == "error") {
+                            alert('error');
+                        }
+
+                    });
+        }
+    }
+
+    // 保存
+    function save() {
+        var formJson = $("#form").serializeJson();
+        if (formJson) {
+            $.post(url_save,
+                    formJson,
+                    function (result) {
+                        var dataObj = eval("(" + result + ")");
+                        var ret = dataObj.message;
+                        if ($.trim(ret) == "ok") {
+                            formHidden();
+                            reLoadTable();
+                        }
+                        if ($.trim(ret) == "has") {
+                            alert('此ID已存在,请重新输入');
+                        }
+                        if ($.trim(ret) == "error") {
+                            alert('error');
+                        }
+
+                    });
+        } else {
+            alert("请输入必要参数");
+        }
+    }
+</script>
+
+
+<div>
+    <!--操作按钮-->
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary" onclick="add()">添加</button>
+    </div>
+    <hr/>
+
+    <!--列表table-->
+    <table id="resContentTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+                <th>id</th>                            <th>oldId</th>                            <th>docId</th>                            <th>publisher</th>                            <th>classid</th>                            <th>catalogid</th>                            <th>type</th>                            <th>title</th>                            <th>content</th>                            <th>files</th>                            <th>keywords</th>                            <th>author</th>                            <th>totalsize</th>                            <th>createTime</th>                            <th>modifyTime</th>                            <th>ordernum</th>                            <th>visible</th>                            <th>memo</th>                            <th>status</th>                            <th>extend</th>                            <th>操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+
+<!--Form表单的模态对话框-->
+<div class="modal fade" id="add_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">用户信息编辑</h4>
+            </div>
+            <div class="modal-body">
+                <form id="form">
+                        id:
+                        <input id="id" name="id" class="form-control" style="width:100%"/>
+                        oldId:
+                        <input id="oldId" name="oldId" class="form-control" style="width:100%"/>
+                        docId:
+                        <input id="docId" name="docId" class="form-control" style="width:100%"/>
+                        publisher:
+                        <input id="publisher" name="publisher" class="form-control" style="width:100%"/>
+                        classid:
+                        <input id="classid" name="classid" class="form-control" style="width:100%"/>
+                        catalogid:
+                        <input id="catalogid" name="catalogid" class="form-control" style="width:100%"/>
+                        type:
+                        <input id="type" name="type" class="form-control" style="width:100%"/>
+                        title:
+                        <input id="title" name="title" class="form-control" style="width:100%"/>
+                        content:
+                        <input id="content" name="content" class="form-control" style="width:100%"/>
+                        files:
+                        <input id="files" name="files" class="form-control" style="width:100%"/>
+                        keywords:
+                        <input id="keywords" name="keywords" class="form-control" style="width:100%"/>
+                        author:
+                        <input id="author" name="author" class="form-control" style="width:100%"/>
+                        totalsize:
+                        <input id="totalsize" name="totalsize" class="form-control" style="width:100%"/>
+                        createTime:
+                        <input id="createTime" name="createTime" class="form-control" style="width:100%"/>
+                        modifyTime:
+                        <input id="modifyTime" name="modifyTime" class="form-control" style="width:100%"/>
+                        ordernum:
+                        <input id="ordernum" name="ordernum" class="form-control" style="width:100%"/>
+                        visible:
+                        <input id="visible" name="visible" class="form-control" style="width:100%"/>
+                        memo:
+                        <input id="memo" name="memo" class="form-control" style="width:100%"/>
+                        status:
+                        <input id="status" name="status" class="form-control" style="width:100%"/>
+                        extend:
+                        <input id="extend" name="extend" class="form-control" style="width:100%"/>
+                </form>
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="save()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--删除提示的模态对话框-->
+<div class="modal fade" id="alert_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">删除提示</h4>
+            </div>
+            <div class="modal-body">
+                确定删除此条数据吗？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="delAct()">删除</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
